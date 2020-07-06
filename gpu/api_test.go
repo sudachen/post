@@ -26,14 +26,14 @@ func TestStats(t *testing.T) {
 
 	c := Stats()
 	req.True(c.CPU)
-	//req.False(c.GPUCuda)
-	//req.False(c.GPUOpenCL)
-	//req.True(c.GPUVulkan)
+	req.False(c.GPUCuda)
+	req.False(c.GPUOpenCL)
+	req.True(c.GPUVulkan)
 }
 
 func TestGPUCount(t *testing.T) {
-	//req := require.New(t)
-	//
-	//count := GPUCount(true)
-	//req.Equal(2, count)
+	req := require.New(t)
+
+	count := GPUCount(true)
+	req.Equal(2, count)
 }
