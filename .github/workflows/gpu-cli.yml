@@ -1,0 +1,48 @@
+name: GPU-CI
+
+on: push
+
+jobs:
+  linux:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-18.04
+            cuda: "10.2"
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install CUDA
+        env:
+          CUDA: ${{ matrix.cuda }}
+        run: .github/tools/linux-install-cuda.sh
+      - name: Install Vulkan
+        run: .github/tools/linux-install-vulkan.sh
+      - name: GPU test
+        run: go test ./gpu -v
+  windows:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: windows-2016
+            cuda: "10.2.89"
+            cuda_hash: b538271c4d9ffce1a8520bf992d9bd23854f0f29cee67f48c6139e4cf301e253
+            vulkan: "1.1.126.0"
+            vs_path: c:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install CUDA
+        run: choco install cuda --version=${{ matrix.cuda }} --checksum ${{ matrix.cuda_hash }}
+      - name: Install Vulkan
+        run: choco install vulkan-sdk --version=${{ matrix.vulkan }}
+      - name: GPU test
+        run: go test ./gpu -v
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Vulkan
+        run: .github/tools/macos-install-vulkan.sh
+      - name: GPU test
+        run: go test ./gpu -v
