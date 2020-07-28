@@ -51,7 +51,7 @@ func (c ComputeAPIClass) String() string {
 	}
 }
 
-func cScryptPositions(providerId uint, id, salt []byte, startPosition, endPosition uint64, hashLenBits uint8, options uint32, outputSize uint64, n, r, p uint32) ([]byte, int) {
+func cScryptPositions(providerId uint, id, salt []byte, startPosition, endPosition uint64, hashLenBits uint8, options uint32, outputSize uint64, n, r, p uint32) ([]byte, int, int) {
 	cProviderId := C.uint(providerId)
 	cId := (*C.uchar)(GoBytes(id).CBytesClone().data)
 	cStartPosition := C.uint64_t(startPosition)
@@ -64,6 +64,7 @@ func cScryptPositions(providerId uint, id, salt []byte, startPosition, endPositi
 	cN := C.uint(n)
 	cR := C.uint(r)
 	cP := C.uint(p)
+	var cHashesComputed C.uint64_t
 
 	defer func() {
 		cFree(unsafe.Pointer(cId))
@@ -83,8 +84,10 @@ func cScryptPositions(providerId uint, id, salt []byte, startPosition, endPositi
 		cN,
 		cR,
 		cP,
+		&cHashesComputed,
 	)
-	return cBytesCloneToGoBytes(cOut, int(outputSize)), int(retVal)
+	//fmt.Printf("## %v\n", cHashesComputed)
+	return cBytesCloneToGoBytes(cOut, int(outputSize)), int(retVal), int(cHashesComputed)
 }
 
 func cGetProviders() []ComputeProvider {

@@ -9,20 +9,20 @@ func GetProviders() []ComputeProvider {
 	return cGetProviders()
 }
 
-func ScryptPositions(providerId uint, id, salt []byte, startPosition, endPosition uint64, hashLenBits uint8, options uint32) ([]byte, error) {
+func ScryptPositions(providerId uint, id, salt []byte, startPosition, endPosition uint64, hashLenBits uint8, options uint32) ([]byte, error, int) {
 	if hashLenBits < 1 || hashLenBits > 8 {
-		return nil, fmt.Errorf("invalid hashLenBits value; expected: 1-8, given: %v", hashLenBits)
+		return nil, fmt.Errorf("invalid hashLenBits value; expected: 1-8, given: %v", hashLenBits), 0
 	}
 
 	const n, r, p = 512, 1, 1
 	outputSize := calcOutputSize(startPosition, endPosition, hashLenBits)
 
-	output, retVal := cScryptPositions(providerId, id, salt, startPosition, endPosition, hashLenBits, options, outputSize, n, r, p)
+	output, retVal, count := cScryptPositions(providerId, id, salt, startPosition, endPosition, hashLenBits, options, outputSize, n, r, p)
 	switch retVal {
 	case 0:
-		return output, nil
+		return output, nil, count
 	case -1:
-		return nil, fmt.Errorf("invalid provider id: %v", providerId)
+		return nil, fmt.Errorf("invalid provider id: %v", providerId), 0
 	default:
 		panic("unreachable")
 	}
@@ -40,7 +40,7 @@ func Benchmark(providerId uint) (uint64, error) {
 
 	// TODO(moshababo): refactor ScryptPositions to return the internal time duration, which is more accurate.
 	t := time.Now()
-	output, err := ScryptPositions(providerId, id, salt, startPosition, endPosition, hashLenBits, options)
+	output, err, _ := ScryptPositions(providerId, id, salt, startPosition, endPosition, hashLenBits, options)
 	d := time.Since(t)
 	if err != nil {
 		return 0, err
