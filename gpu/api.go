@@ -16,7 +16,7 @@ func (p *ComputeProvider) Benchmark() (int, error) {
 	id := make([]byte, 32)
 	salt := make([]byte, 32)
 	options := uint32(0)
-	hashLenBits := uint8(8)
+	hashLenBits := uint32(8)
 	startPosition := uint64(1)
 	endPosition := uint64(1 << 20)
 	if p.Model == "CPU" {
@@ -35,9 +35,9 @@ func Providers() []ComputeProvider {
 	return cGetProviders()
 }
 
-func ScryptPositions(providerId uint, id, salt []byte, startPosition, endPosition uint64, hashLenBits uint8, options uint32) ([]byte, int, error) {
-	if hashLenBits < 1 || hashLenBits > 8 {
-		return nil, 0, fmt.Errorf("invalid `hashLenBits` value; expected: 1-8, given: %v", hashLenBits)
+func ScryptPositions(providerId uint, id, salt []byte, startPosition, endPosition uint64, hashLenBits, options uint32) ([]byte, int, error) {
+	if hashLenBits < 1 || hashLenBits > 256 {
+		return nil, 0, fmt.Errorf("invalid `hashLenBits` value; expected: 1-256, given: %v", hashLenBits)
 	}
 	if len(id) != 32 {
 		return nil, 0, fmt.Errorf("invalid `id` length; expected: 32, given: %v", len(id))
