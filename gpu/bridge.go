@@ -1,6 +1,5 @@
 package gpu
 
-// #cgo LDFLAGS: -Wl,-rpath,\$ORIGIN -Lbuild -Wl,-rpath,${SRCDIR}/../build -L${SRCDIR}/../build -lgpu-setup
 // #include "./api.h"
 // #include <stdlib.h>
 //
