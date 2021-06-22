@@ -13,7 +13,9 @@ else
   HOST_OS := $(shell uname | tr [A-Z] [a-z])
 endif
 
-GOOS ?= $(HOST_OS)
+ifeq ($(GOOS),)
+  GOOS := $(HOST_OS)
+endif
 
 ifeq ($(GOOS),windows)
   platform := windows
