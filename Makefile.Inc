@@ -57,3 +57,4 @@ $(BIN_DIR)$(BINARY):
 	go build ${LDFLAGS} -o $(BIN_DIR)$(BINARY)
 
 get-gpu-setup: $(PROJ_DIR)$(GPU_SETUP_ZIP) $(BINDIR_GPU_SETUP_LIBS)
+.PHONY: get-gpu-setup
