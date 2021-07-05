@@ -41,6 +41,7 @@ var (
 func init() {
 	providers = gpu.Providers()
 	cpuProviderID = int(cpuProvider(providers).ID)
+	fmt.Println("CPU provider ID",cpuProviderID)
 }
 
 func Providers() []ComputeProvider {
